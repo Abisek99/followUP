@@ -1,7 +1,7 @@
 const userModel = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const { use } = require("../routes/userRoutes");
+//const { use } = require("../routes/userRoutes");
 
 //register callback
 const registerController = async (req, res) => {

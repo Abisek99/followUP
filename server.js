@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv").config();
 const dbConfig = require("./config/dbConfig");
+const cors = require("cors");
 //const userRoutes = require("./routes/userRoute");
 
 //rest object
@@ -8,6 +9,7 @@ const app = express();
 
 //middlewares
 app.use(express.json());
+app.use(cors());
 
 //dotenv config
 //dotenv.config();
