@@ -97,7 +97,7 @@ const applyDoctorController = async (req, res) => {
     await userModel.findByIdAndUpdate(adminUser._id, { notification });
     res.status(201).send({
       success: true,
-      message: "Congratulations! Application for Doctor Successfull",
+      message: "Application for Doctor Successfull!",
     });
   } catch (error) {
     console.log(error);

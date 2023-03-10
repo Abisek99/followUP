@@ -17,6 +17,7 @@ app.use(cors());
 //routes
 //app.get("/", (req, res) => res.send("API is Running"));
 app.use("/api/v1/user", require("./routes/userRoutes"));
+app.use("/api/v1/admin", require("./routes/adminRoutes"));
 
 //port
 const port = process.env.PORT || 5000;
