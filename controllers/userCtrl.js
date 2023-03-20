@@ -210,11 +210,11 @@ const bookAppointmentController = async (req, res) => {
 //bookingAvailabilityController
 const bookingAvailabilityController = async (req, res) => {
   try {
-    const date = moment(req.body.date, "DD-MM-YY").toISOString();
-    const fromTime = moment(req.body.date, "HH:mm")
+    const date = moment(req.body.date, "DD-MM-YYYY").toISOString();
+    const fromTime = moment(req.body.time, "HH:mm")
       .subtract(1, "hours")
       .toISOString();
-    const toTime = moment(req.body.date, "HH:mm").add(1, "hours").toISOString();
+    const toTime = moment(req.body.time, "HH:mm").add(1, "hours").toISOString();
     const doctorId = req.body.doctorId;
     const appointments = await appointmentModel.find({
       doctorId,
@@ -227,7 +227,7 @@ const bookingAvailabilityController = async (req, res) => {
     if (appointments.length > 0) {
       return res.status(200).send({
         message: "Appointments not available at this time!",
-        success: true,
+        success: false,
       });
     } else {
       return res.status(200).send({
