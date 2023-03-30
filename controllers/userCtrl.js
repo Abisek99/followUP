@@ -190,7 +190,7 @@ const bookAppointmentController = async (req, res) => {
     user.notification.push({
       type: "New-appointment-request",
       message: `A new Appointment Request from ${req.body.userInfo.name}`,
-      onClickPath: "/user/appointments",
+      onClickPath: "/doctor-appointments",
     });
     await user.save();
     res.status(200).send({
@@ -265,6 +265,49 @@ const userAppointmentsController = async (req, res) => {
   }
 };
 
+const getUserInfoController = async (req, res) => {
+  try {
+    const user = await userModel.findOne({
+      _id: req.body.userId,
+      isAdmin: true,
+    });
+    res.status(200).send({
+      success: true,
+      message: "data fetch success",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in fetching Details",
+      error,
+    });
+  }
+};
+
+const updateProfileController = async (req, res) => {
+  try {
+    const updatedUser = await userModel.findOneAndUpdate(
+      { _id: req.body.userId },
+      req.body,
+      { new: true, runValidators: true }
+    );
+    res.status(201).send({
+      success: true,
+      message: "User Profile Updated",
+      data: updatedUser,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "User Profile Update Error!",
+      error,
+    });
+  }
+};
+
 module.exports = {
   loginController,
   registerController,
@@ -276,4 +319,6 @@ module.exports = {
   bookAppointmentController,
   bookingAvailabilityController,
   userAppointmentsController,
+  getUserInfoController,
+  updateProfileController,
 };

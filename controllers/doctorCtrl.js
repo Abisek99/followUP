@@ -1,6 +1,7 @@
 const appointmentModel = require("../models/appointmentModel");
 const doctorModel = require("../models/doctorModel");
 const userModel = require("../models/userModels");
+const prescriptionModel = require("../models/prescriptionModel");
 
 const getDoctorInfoController = async (req, res) => {
   try {
@@ -82,6 +83,38 @@ const doctorAppointmentsController = async (req, res) => {
   }
 };
 
+//prescription doctor
+const prescriptionController = async (req, res) => {
+  try {
+    const prescription = await prescriptionModel({ ...req.body });
+    await prescription.save();
+    const User = await userModel.findOne({ isAdmin: false, isDoctor: false });
+    const notification = User.notification;
+    notification.push({
+      type: "prescription-doctor-request",
+      message: `${prescription.firstName} ${prescription.lastName} has sent a prescription`,
+      data: {
+        userId: prescription._id,
+        name: prescription.firstName + " " + prescription.lastName,
+        onClickPath: "/user/prescriptions",
+      },
+    });
+    await userModel.findByIdAndUpdate(userId._id, { notification });
+    res.status(201).send({
+      success: true,
+      message: "Doctor prescription sent Successfull!",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error applying for doctor",
+    });
+  }
+};
+
+//appointment status controller
 const updateStatusController = async (req, res) => {
   try {
     const { appointmentsId, status } = req.body;
@@ -94,7 +127,7 @@ const updateStatusController = async (req, res) => {
     notification.push({
       type: "Status Updated",
       message: `your Appointment has been ${status}`,
-      onClickPath: "/doctor-appointments",
+      onClickPath: "/appointments",
     });
     await user.save();
     res.status(200).send({
@@ -117,4 +150,5 @@ module.exports = {
   getDoctorByIdController,
   doctorAppointmentsController,
   updateStatusController,
+  prescriptionController,
 };
