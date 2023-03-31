@@ -62,31 +62,6 @@ const updateProfileController = async (req, res) => {
   }
 };
 
-//UPDATE admin profile
-// const updateProfileController = async (req, res) => {
-//   try {
-//     const admin = await userModel.findOneAndUpdate(
-//       { userId: req.body.userId },
-//       { $set: { name: req.body.name, email: req.body.email } },
-//       { new: true }
-//       //req.body
-//       //{ upsert: true, new: true }
-//     );
-//     res.status(201).send({
-//       success: true,
-//       message: "Admin Profile Updated",
-//       data: admin,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Admin Profile Update Error!",
-//       error,
-//     });
-//   }
-// };
-
 const getAllDoctorsController = async (req, res) => {
   try {
     const doctors = await doctorModel.find({});
@@ -114,7 +89,7 @@ const changeAccountStatusController = async (req, res) => {
     const notification = user.notification;
     notification.push({
       type: "doctor-account-request-updated",
-      message: `your doctor account request has ${status}`,
+      message: `your doctor account request has been ${status}`,
       onClickPath: "/notification",
     });
     user.isDoctor = status === "approved" ? true : false;
@@ -164,58 +139,6 @@ const deleteUserController = async (req, res) => {
     });
   }
 };
-
-//deleteworkingSelf
-// const deleteUserController = async (req, res) => {
-//   try {
-//     const { userId } = req.body;
-//     const user = await userModel.findByIdAndDelete(userId);
-//     const notification = user.notification;
-//     notification.push({
-//       type: "user-account-deleted",
-//       message: "account has been deleted",
-//       onClickPath: "/notification",
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Error deleting user!",
-//       error,
-//     });
-//   }
-// };
-
-//remove user controller
-// const deleteUserController = async (req, res) => {
-//   try {
-//     const { userId } = req.body;
-//     if (req.user.role !== "admin") {
-//       return res.status(401).send({
-//         success: false,
-//         message: "Unauthorized access",
-//       });
-//     }
-//     await userModel.findOneAndDelete({ _id: userId });
-//     const notification = {
-//       type: "user-account-deleted",
-//       message: "account has been deleted",
-//       onClickPath: "/",
-//     };
-//     res.status(201).send({
-//       success: true,
-//       message: "User Account Deleted",
-//       notification: notification,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Error Deleting User Account!",
-//       error,
-//     });
-//   }
-// };
 
 module.exports = {
   getAllDoctorsController,

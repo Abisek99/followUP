@@ -245,6 +245,7 @@ const bookingAvailabilityController = async (req, res) => {
   }
 };
 
+//user Appointment Controller
 const userAppointmentsController = async (req, res) => {
   try {
     const appointments = await appointmentModel.find({
@@ -265,6 +266,7 @@ const userAppointmentsController = async (req, res) => {
   }
 };
 
+//get user info
 const getUserInfoController = async (req, res) => {
   try {
     const user = await userModel.findOne({
@@ -286,6 +288,7 @@ const getUserInfoController = async (req, res) => {
   }
 };
 
+//update profile controller
 const updateProfileController = async (req, res) => {
   try {
     const updatedUser = await userModel.findOneAndUpdate(
@@ -308,6 +311,67 @@ const updateProfileController = async (req, res) => {
   }
 };
 
+//cancel appointment controller
+const cancelAppointmentController = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const appointment = await appointmentModel.findByIdAndUpdate(
+      appointmentId,
+      { status: "cancelled" }
+    );
+    const user = await userModel.findOne({ _id: appointment.userId });
+    const notification = user.notification;
+    notification.push({
+      type: "Appointment Cancelled",
+      message: `Your appointment has been cancelled`,
+      onClickPath: "/appointments",
+    });
+
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "Appointment Cancelled",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error in cancelling appointment",
+    });
+  }
+};
+
+const rescheduleAppointmentController = async (req, res) => {
+  try {
+    const { appointmentId } = req.body;
+    const appointment = await appointmentModel.findByIdAndUpdate(
+      appointmentId,
+      { status: "pending" }
+    );
+    const user = await userModel.findOne({ _id: appointment.userId });
+    const notification = user.notification;
+    notification.push({
+      type: "Appointment Rescheduled",
+      message: `Your appointment has been Rescheduled`,
+      onClickPath: "/appointments",
+    });
+
+    await user.save();
+    res.status(200).send({
+      success: true,
+      message: "Appointment Rescheduled",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error in Rescheduled appointment",
+    });
+  }
+};
+
 module.exports = {
   loginController,
   registerController,
@@ -321,4 +385,6 @@ module.exports = {
   userAppointmentsController,
   getUserInfoController,
   updateProfileController,
+  cancelAppointmentController,
+  rescheduleAppointmentController,
 };

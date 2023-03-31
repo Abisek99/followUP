@@ -13,6 +13,8 @@ const {
   userAppointmentsController,
   updateProfileController,
   getUserInfoController,
+  cancelAppointmentController,
+  rescheduleAppointmentController,
 } = require("../controllers/userCtrl");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -51,6 +53,16 @@ router.get("/getAllDoctors", authMiddleware, getAllDoctorsController);
 
 //Book Appointment
 router.post("/book-appointment", authMiddleware, bookAppointmentController);
+
+//Cancel Appointment
+router.post("/cancel-appointment", authMiddleware, cancelAppointmentController);
+
+//Reschedule Appointment
+router.post(
+  "/reschedule-appointment",
+  authMiddleware,
+  rescheduleAppointmentController
+);
 
 //Booking Availability Appointment
 router.post(
