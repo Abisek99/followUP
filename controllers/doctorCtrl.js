@@ -3,6 +3,7 @@ const doctorModel = require("../models/doctorModel");
 const userModel = require("../models/userModels");
 const prescriptionModel = require("../models/prescriptionModel");
 
+//doctor data
 const getDoctorInfoController = async (req, res) => {
   try {
     const doctor = await doctorModel.findOne({ userId: req.body.userId });
@@ -62,6 +63,7 @@ const getDoctorByIdController = async (req, res) => {
   }
 };
 
+//doctor appointments controller
 const doctorAppointmentsController = async (req, res) => {
   try {
     const doctor = await doctorModel.findOne({ userId: req.body.userId });

@@ -55,6 +55,7 @@ const loginController = async (req, res) => {
   }
 };
 
+//auth controller
 const authController = async (req, res) => {
   try {
     const user = await userModel.findById({ _id: req.body.userId });

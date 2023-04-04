@@ -41,6 +41,10 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       required: [true, "hospital is required"],
     },
+    package: {
+      type: String,
+      required: [false, "health package if any facility"],
+    },
     status: {
       type: String,
       default: "pending",

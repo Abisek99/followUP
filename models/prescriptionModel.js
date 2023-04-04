@@ -6,6 +6,10 @@ const prescriptionSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userId: {
+      type: String,
+      required: true,
+    },
     firstName: {
       type: String,
       required: [true, "first name is required"],
