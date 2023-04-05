@@ -110,31 +110,81 @@ const changeAccountStatusController = async (req, res) => {
 };
 
 //inactive user account
-const deleteUserController = async (req, res) => {
-  try {
-    const { userId } = req.body;
+// const deleteUserController = async (req, res) => {
+//   try {
+//     const { userId } = req.body;
 
-    const updatedUser = await userModel.findByIdAndUpdate(
-      userId,
-      { isActive: false },
-      { new: true }
+//     const updatedUser = await userModel.findByIdAndUpdate(
+//       userId,
+//       { isActive: false },
+//       { new: true }
+//     );
+//     if (!updatedUser) {
+//       return res.status(404).send({
+//         success: false,
+//         message: "User not found",
+//       });
+//     }
+//     res.status(200).send({
+//       success: true,
+//       message: "User account inactivated!",
+//       data: updatedUser,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       success: false,
+//       message: "Error updating user!",
+//       error,
+//     });
+//   }
+// };
+
+//email ctrl
+const emailController = async (req, res) => {
+  try {
+    const { type, subject, message, onClickPath } = req.body;
+
+    // Fetch all users from your backend API
+    const response = await axios.get(
+      "http://localhost:5000/api/v1/admin/getAllUsers",
+      {
+        headers: {
+          Authorization: `Bearer ${req.headers.authorization.split(" ")[1]}`,
+        },
+      }
     );
-    if (!updatedUser) {
-      return res.status(404).send({
-        success: false,
-        message: "User not found",
-      });
+
+    if (!response.data.success) {
+      throw new Error("Failed to fetch users.");
     }
+
+    const users = response.data.data;
+
+    // Send notification to all users
+    for (const user of users) {
+      const notificationOptions = {
+        message: type === "event" ? `New Health Event: ${subject}` : subject,
+        description: message,
+        onClick: () => {
+          window.location.href = onClickPath || "/";
+        },
+      };
+
+      // send notification to user
+      user.notification.push(notificationOptions);
+      await user.save();
+    }
+
     res.status(200).send({
       success: true,
-      message: "User account inactivated!",
-      data: updatedUser,
+      message: "Notification sent successfully!",
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).send({
       success: false,
-      message: "Error updating user!",
+      message: "Error sending notification.",
       error,
     });
   }
@@ -144,7 +194,8 @@ module.exports = {
   getAllDoctorsController,
   getAllUsersController,
   changeAccountStatusController,
-  deleteUserController,
+  //deleteUserController,
   updateProfileController,
   getAdminInfoController,
+  emailController,
 };

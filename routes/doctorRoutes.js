@@ -29,7 +29,7 @@ router.get(
 );
 
 //POST Prescription
-router.post("/doctor/prescription", authMiddleware, prescriptionController);
+router.post("/doctor-prescription", authMiddleware, prescriptionController);
 
 //POST Update Status
 router.post("/update-status", authMiddleware, updateStatusController);

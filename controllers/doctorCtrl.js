@@ -88,30 +88,30 @@ const doctorAppointmentsController = async (req, res) => {
 //prescription doctor
 const prescriptionController = async (req, res) => {
   try {
-    const prescription = await prescriptionModel({ ...req.body });
-    await prescription.save();
-    const User = await userModel.findOne({ isAdmin: false, isDoctor: false });
-    const notification = User.notification;
+    const newPrescription = new prescriptionModel({ ...req.body });
+    await newPrescription.save();
+    const user = await userModel.findOne({ isAdmin: false, isDoctor: false });
+    const notification = user.notification;
     notification.push({
       type: "prescription-doctor-request",
-      message: `${prescription.firstName} ${prescription.lastName} has sent a prescription`,
+      message: `Doctor has sent a prescription`,
       data: {
-        userId: prescription._id,
-        name: prescription.firstName + " " + prescription.lastName,
+        prescriptionId: newPrescription._id,
+        name: newPrescription.firstName + " " + newPrescription.lastName,
         onClickPath: "/user/prescriptions",
       },
     });
-    await userModel.findByIdAndUpdate(userId._id, { notification });
-    res.status(201).send({
+    await user.save();
+    res.status(200).send({
       success: true,
-      message: "Doctor prescription sent Successfull!",
+      message: "Doctor prescription sent successfully!",
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       error,
-      message: "Error applying for doctor",
+      message: "Error sending prescription",
     });
   }
 };
