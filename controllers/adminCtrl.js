@@ -1,5 +1,6 @@
 const doctorModel = require("../models/doctorModel");
 const userModel = require("../models/userModels");
+const eventModel = require("../models/eventModel");
 
 const getAdminInfoController = async (req, res) => {
   try {
@@ -109,83 +110,31 @@ const changeAccountStatusController = async (req, res) => {
   }
 };
 
-//inactive user account
-// const deleteUserController = async (req, res) => {
-//   try {
-//     const { userId } = req.body;
-
-//     const updatedUser = await userModel.findByIdAndUpdate(
-//       userId,
-//       { isActive: false },
-//       { new: true }
-//     );
-//     if (!updatedUser) {
-//       return res.status(404).send({
-//         success: false,
-//         message: "User not found",
-//       });
-//     }
-//     res.status(200).send({
-//       success: true,
-//       message: "User account inactivated!",
-//       data: updatedUser,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       success: false,
-//       message: "Error updating user!",
-//       error,
-//     });
-//   }
-// };
-
-//email ctrl
-const emailController = async (req, res) => {
+//event ctrl
+const eventsController = async (req, res) => {
   try {
-    const { type, subject, message, onClickPath } = req.body;
-
-    // Fetch all users from your backend API
-    const response = await axios.get(
-      "http://localhost:5000/api/v1/admin/getAllUsers",
-      {
-        headers: {
-          Authorization: `Bearer ${req.headers.authorization.split(" ")[1]}`,
-        },
-      }
-    );
-
-    if (!response.data.success) {
-      throw new Error("Failed to fetch users.");
-    }
-
-    const users = response.data.data;
-
-    // Send notification to all users
-    for (const user of users) {
-      const notificationOptions = {
-        message: type === "event" ? `New Health Event: ${subject}` : subject,
-        description: message,
-        onClick: () => {
-          window.location.href = onClickPath || "/";
-        },
-      };
-
-      // send notification to user
-      user.notification.push(notificationOptions);
-      await user.save();
-    }
-
+    const { subject, message } = req.body;
+    const appliedEvents = new eventModel({
+      subject,
+      message,
+    });
+    const savedEvent = await appliedEvents.save();
+    const obj = {
+      id: savedEvent._id,
+      subject: savedEvent.subject,
+      message: savedEvent.message,
+    };
     res.status(200).send({
       success: true,
-      message: "Notification sent successfully!",
+      message: "Event Notice sent Successfully",
+      appliedEvents: obj,
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error sending notification.",
       error,
+      message: "Error in Event",
     });
   }
 };
@@ -194,8 +143,7 @@ module.exports = {
   getAllDoctorsController,
   getAllUsersController,
   changeAccountStatusController,
-  //deleteUserController,
   updateProfileController,
   getAdminInfoController,
-  emailController,
+  eventsController,
 };

@@ -3,10 +3,9 @@ const {
   getAllDoctorsController,
   getAllUsersController,
   changeAccountStatusController,
-  deleteUserController,
   updateProfileController,
   getAdminInfoController,
-  emailController,
+  eventsController,
 } = require("../controllers/adminCtrl");
 
 //router object
@@ -37,6 +36,6 @@ router.post(
 //router.post("/deleteUser", authMiddleware, deleteUserController);
 
 //POST method || events
-router.post("/events", authMiddleware, emailController);
+router.post("/events", authMiddleware, eventsController);
 
 module.exports = router;

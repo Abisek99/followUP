@@ -16,6 +16,8 @@ const {
   cancelAppointmentController,
   rescheduleAppointmentController,
   payViaKhaltiController,
+  userEventsController,
+  userPrescriptionController,
 } = require("../controllers/userCtrl");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -83,5 +85,11 @@ router.post("/getUserInfo", authMiddleware, getUserInfoController);
 
 //POST payment
 router.post("/payment", authMiddleware, payViaKhaltiController);
+
+//GET Events
+router.get("/user-events", authMiddleware, userEventsController);
+
+//GET Prescriptions
+router.get("/user-prescriptions", authMiddleware, userPrescriptionController);
 
 module.exports = router;

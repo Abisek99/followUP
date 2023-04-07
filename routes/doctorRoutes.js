@@ -6,6 +6,7 @@ const {
   doctorAppointmentsController,
   updateStatusController,
   prescriptionController,
+  doctorEventsController,
 } = require("../controllers/doctorCtrl");
 
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -27,6 +28,9 @@ router.get(
   authMiddleware,
   doctorAppointmentsController
 );
+
+//GET Events
+router.get("/doctor-events", authMiddleware, doctorEventsController);
 
 //POST Prescription
 router.post("/doctor-prescription", authMiddleware, prescriptionController);

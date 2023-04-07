@@ -5,6 +5,8 @@ const doctorModel = require("../models/doctorModel");
 const appointmentModel = require("../models/appointmentModel");
 const moment = require("moment");
 const axios = require("axios");
+const eventModel = require("../models/eventModel");
+const prescriptionModel = require("../models/prescriptionModel");
 //const { use } = require("../routes/userRoutes");
 
 //register callback
@@ -380,6 +382,45 @@ const rescheduleAppointmentController = async (req, res) => {
   }
 };
 
+//User fetch events controller
+const userEventsController = async (req, res) => {
+  try {
+    const events = await eventModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Events fetched successfully",
+      data: events,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error fetching events",
+    });
+  }
+};
+
+//user prescription controller
+const userPrescriptionController = async (req, res) => {
+  try {
+    const email = req.query.email;
+    const prescriptions = await prescriptionModel.find({ email });
+    res.status(200).send({
+      success: true,
+      message: "User prescriptions fetched successfully",
+      data: prescriptions,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error fetching user prescriptions",
+    });
+  }
+};
+
 //payment controller
 const payViaKhaltiController = async (req, res) => {
   try {
@@ -431,5 +472,7 @@ module.exports = {
   updateProfileController,
   cancelAppointmentController,
   rescheduleAppointmentController,
+  userEventsController,
+  userPrescriptionController,
   payViaKhaltiController,
 };

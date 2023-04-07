@@ -2,6 +2,7 @@ const appointmentModel = require("../models/appointmentModel");
 const doctorModel = require("../models/doctorModel");
 const userModel = require("../models/userModels");
 const prescriptionModel = require("../models/prescriptionModel");
+const eventModel = require("../models/eventModel");
 
 //doctor data
 const getDoctorInfoController = async (req, res) => {
@@ -178,6 +179,25 @@ const updateStatusController = async (req, res) => {
   }
 };
 
+//Doctor fetch events controller
+const doctorEventsController = async (req, res) => {
+  try {
+    const events = await eventModel.find();
+    res.status(200).send({
+      success: true,
+      message: "Events fetched successfully",
+      data: events,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      error,
+      message: "Error fetching events",
+    });
+  }
+};
+
 module.exports = {
   getDoctorInfoController,
   updateProfileController,
@@ -185,4 +205,5 @@ module.exports = {
   doctorAppointmentsController,
   updateStatusController,
   prescriptionController,
+  doctorEventsController,
 };
