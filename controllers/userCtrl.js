@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const doctorModel = require("../models/doctorModel");
 const appointmentModel = require("../models/appointmentModel");
 const moment = require("moment");
+const axios = require("axios");
 //const { use } = require("../routes/userRoutes");
 
 //register callback
@@ -292,9 +293,15 @@ const getUserInfoController = async (req, res) => {
 //update profile controller
 const updateProfileController = async (req, res) => {
   try {
+    const { name, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
     const updatedUser = await userModel.findOneAndUpdate(
       { _id: req.body.userId },
-      req.body,
+      {
+        name,
+        email,
+        password: hashedPassword,
+      },
       { new: true, runValidators: true }
     );
     res.status(201).send({
@@ -373,6 +380,42 @@ const rescheduleAppointmentController = async (req, res) => {
   }
 };
 
+//payment controller
+const payViaKhaltiController = async (req, res) => {
+  try {
+    // Retrieve the payment details from the request body
+    const { amount, mobile } = req.body;
+
+    // Call the Khalti API to initiate the payment
+    const response = await axios.post(
+      "https://khalti.com/api/v1/payment/initiate",
+      {
+        amount,
+        mobile,
+        productIdentity: "MyProduct",
+        productName: "My Product",
+      },
+      {
+        headers: {
+          Authorization: "Bearer " + process.env.KHALTI_SECRET_KEY,
+        },
+      }
+    );
+
+    // Return the payment response to the client
+    res.status(200).send({
+      success: true,
+      response: response.data,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({
+      success: false,
+      message: "Error in initiating Khalti payment",
+    });
+  }
+};
+
 module.exports = {
   loginController,
   registerController,
@@ -388,4 +431,5 @@ module.exports = {
   updateProfileController,
   cancelAppointmentController,
   rescheduleAppointmentController,
+  payViaKhaltiController,
 };

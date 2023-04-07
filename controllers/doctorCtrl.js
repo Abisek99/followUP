@@ -85,36 +85,68 @@ const doctorAppointmentsController = async (req, res) => {
   }
 };
 
-//prescription doctor
 const prescriptionController = async (req, res) => {
   try {
-    const newPrescription = new prescriptionModel({ ...req.body });
-    await newPrescription.save();
-    const user = await userModel.findOne({ isAdmin: false, isDoctor: false });
-    const notification = user.notification;
-    notification.push({
-      type: "prescription-doctor-request",
-      message: `Doctor has sent a prescription`,
-      data: {
-        prescriptionId: newPrescription._id,
-        name: newPrescription.firstName + " " + newPrescription.lastName,
-        onClickPath: "/user/prescriptions",
-      },
+    const { firstName, lastName, email, prescription } = req.body;
+    const appliedPrescription = new prescriptionModel({
+      firstName,
+      lastName,
+      email,
+      prescription,
     });
-    await user.save();
+    const savedPrescription = await appliedPrescription.save();
+    const obj = {
+      id: savedPrescription._id,
+      firstName: savedPrescription.firstName,
+      lastName: savedPrescription.lastName,
+      email: savedPrescription.email,
+      prescription: savedPrescription.prescription,
+    };
     res.status(200).send({
       success: true,
-      message: "Doctor prescription sent successfully!",
+      message: "Prescription sent Successfully",
+      appliedPrescription: obj,
     });
   } catch (error) {
     console.log(error);
     res.status(500).send({
       success: false,
       error,
-      message: "Error sending prescription",
+      message: "Error in Prescription",
     });
   }
 };
+
+//prescription doctor
+// const prescriptionController = async (req, res) => {
+//   try {
+//     const newPrescription = new prescriptionModel({ ...req.body });
+//     await newPrescription.save();
+//     const user = await userModel.findOne({ isAdmin: false, isDoctor: false });
+//     const notification = user.notification;
+//     notification.push({
+//       type: "prescription-doctor-request",
+//       message: `Doctor has sent a prescription`,
+//       data: {
+//         prescriptionId: newPrescription._id,
+//         name: newPrescription.firstName + " " + newPrescription.lastName,
+//         onClickPath: "/user/prescriptions",
+//       },
+//     });
+//     await user.save();
+//     res.status(200).send({
+//       success: true,
+//       message: "Doctor prescription sent successfully!",
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send({
+//       success: false,
+//       error,
+//       message: "Error sending prescription",
+//     });
+//   }
+// };
 
 //appointment status controller
 const updateStatusController = async (req, res) => {
