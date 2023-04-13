@@ -32,9 +32,6 @@ router.post(
   changeAccountStatusController
 );
 
-//POST remove user
-//router.post("/deleteUser", authMiddleware, deleteUserController);
-
 //POST method || events
 router.post("/events", authMiddleware, eventsController);
 

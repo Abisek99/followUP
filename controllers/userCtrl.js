@@ -7,7 +7,6 @@ const moment = require("moment");
 const axios = require("axios");
 const eventModel = require("../models/eventModel");
 const prescriptionModel = require("../models/prescriptionModel");
-//const { use } = require("../routes/userRoutes");
 
 //register callback
 const registerController = async (req, res) => {
