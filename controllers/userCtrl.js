@@ -4,9 +4,9 @@ const jwt = require("jsonwebtoken");
 const doctorModel = require("../models/doctorModel");
 const appointmentModel = require("../models/appointmentModel");
 const moment = require("moment");
-const axios = require("axios");
 const eventModel = require("../models/eventModel");
 const prescriptionModel = require("../models/prescriptionModel");
+const Payment = require("../models/paymentModel");
 
 //register callback
 const registerController = async (req, res) => {
@@ -421,37 +421,32 @@ const userPrescriptionController = async (req, res) => {
 };
 
 //payment controller
-const payViaKhaltiController = async (req, res) => {
+const payController = async (req, res) => {
   try {
-    // Retrieve the payment details from the request body
-    const { amount, mobile } = req.body;
-
-    // Call the Khalti API to initiate the payment
-    const response = await axios.post(
-      "https://khalti.com/api/v1/payment/initiate",
-      {
-        amount,
-        mobile,
-        productIdentity: "MyProduct",
-        productName: "My Product",
-      },
-      {
-        headers: {
-          Authorization: "Bearer " + process.env.KHALTI_SECRET_KEY,
-        },
-      }
-    );
-
-    // Return the payment response to the client
+    const { fullName, email, amount } = req.body;
+    const payment = new Payment({
+      fullName,
+      email,
+      amount,
+    });
+    const savedPayment = await payment.save();
+    const obj = {
+      id: savedPayment._id,
+      fullName: savedPayment.fullName,
+      email: savedPayment.email,
+      amount: savedPayment.amount,
+    };
     res.status(200).send({
       success: true,
-      response: response.data,
+      message: "Payment received successfully",
+      payment: obj,
     });
   } catch (error) {
-    console.error(error);
+    console.log(error);
     res.status(500).send({
       success: false,
-      message: "Error in initiating Khalti payment",
+      error,
+      message: "Error in processing payment",
     });
   }
 };
@@ -473,5 +468,5 @@ module.exports = {
   rescheduleAppointmentController,
   userEventsController,
   userPrescriptionController,
-  payViaKhaltiController,
+  payController,
 };

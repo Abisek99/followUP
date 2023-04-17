@@ -15,9 +15,10 @@ const {
   getUserInfoController,
   cancelAppointmentController,
   rescheduleAppointmentController,
-  payViaKhaltiController,
+  //payViaKhaltiController,
   userEventsController,
   userPrescriptionController,
+  payController,
 } = require("../controllers/userCtrl");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -84,7 +85,7 @@ router.post("/updateProfile", authMiddleware, updateProfileController);
 router.post("/getUserInfo", authMiddleware, getUserInfoController);
 
 //POST payment
-router.post("/payment", authMiddleware, payViaKhaltiController);
+router.post("/payment", authMiddleware, payController);
 
 //GET Events
 router.get("/user-events", authMiddleware, userEventsController);
